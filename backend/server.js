@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -8,9 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// =====================================
-// CHECK ENVIRONMENT VARIABLES
-// =====================================
+/* ==============================
+   FRONTEND
+================================ */
+
+app.use(express.static(path.join(__dirname, "..")));
+
+
+/* ==============================
+   DATABASE ENV CHECK
+================================ */
 
 console.log("========== DATABASE ENV CHECK ==========");
 
@@ -26,14 +34,10 @@ console.log("MYSQL USER:", process.env.MYSQLUSER);
 
 console.log("========================================");
 
-// =====================================
-// DATABASE CONFIGURATION
-// =====================================
 
-// Railway MySQL variables available නම්
-// ඒවා use කරනවා.
-//
-// DB_* variables available නම් ඒවා fallback එකක් විදිහට use කරනවා.
+/* ==============================
+   DATABASE CONFIG
+================================ */
 
 const DB_HOST =
     process.env.MYSQLHOST ||
@@ -56,9 +60,6 @@ const DB_PORT =
     Number(process.env.DB_PORT) ||
     3306;
 
-// =====================================
-// FINAL DATABASE CONFIG CHECK
-// =====================================
 
 console.log("========== FINAL DATABASE CONFIG ==========");
 
@@ -69,9 +70,10 @@ console.log("FINAL DB USER:", DB_USER);
 
 console.log("===========================================");
 
-// =====================================
-// MYSQL CONNECTION
-// =====================================
+
+/* ==============================
+   MYSQL CONNECTION
+================================ */
 
 const db = mysql.createConnection({
     host: DB_HOST,
@@ -81,9 +83,6 @@ const db = mysql.createConnection({
     port: DB_PORT
 });
 
-// =====================================
-// CONNECT MYSQL
-// =====================================
 
 db.connect((err) => {
 
@@ -101,19 +100,23 @@ db.connect((err) => {
 
 });
 
-// =====================================
-// TEST ROUTE
-// =====================================
+
+/* ==============================
+   FRONTEND HOME PAGE
+================================ */
 
 app.get("/", (req, res) => {
 
-    res.send("Date Website Backend is Running!");
+    res.sendFile(
+        path.join(__dirname, "..", "index.html")
+    );
 
 });
 
-// =====================================
-// SAVE DATE RESPONSE
-// =====================================
+
+/* ==============================
+   SAVE DATE RESPONSE
+================================ */
 
 app.post("/api/date", (req, res) => {
 
@@ -124,6 +127,7 @@ app.post("/api/date", (req, res) => {
         place
     } = req.body;
 
+
     console.log("Received data:", {
         date,
         time,
@@ -131,14 +135,10 @@ app.post("/api/date", (req, res) => {
         place
     });
 
-    // Check required fields
 
-    if (
-        !date ||
-        !time ||
-        !activity ||
-        !place
-    ) {
+    /* Check required fields */
+
+    if (!date || !time || !activity || !place) {
 
         return res.status(400).json({
 
@@ -148,7 +148,8 @@ app.post("/api/date", (req, res) => {
 
     }
 
-    // SQL query
+
+    /* SQL query */
 
     const sql = `
         INSERT INTO date_responses
@@ -161,7 +162,8 @@ app.post("/api/date", (req, res) => {
         VALUES (?, ?, ?, ?)
     `;
 
-    // Insert data
+
+    /* Insert data */
 
     db.query(
 
@@ -183,17 +185,21 @@ app.post("/api/date", (req, res) => {
                     err
                 );
 
+
                 return res.status(500).json({
 
-                    message: "Failed to save data"
+                    message:
+                        "Failed to save data"
 
                 });
 
             }
 
+
             console.log(
                 "Date data saved successfully!"
             );
+
 
             res.json({
 
@@ -211,9 +217,10 @@ app.post("/api/date", (req, res) => {
 
 });
 
-// =====================================
-// GET ALL DATE RESPONSES
-// =====================================
+
+/* ==============================
+   GET ALL DATE RESPONSES
+================================ */
 
 app.get("/api/date", (req, res) => {
 
@@ -222,6 +229,7 @@ app.get("/api/date", (req, res) => {
         FROM date_responses
         ORDER BY created_at DESC
     `;
+
 
     db.query(
 
@@ -236,6 +244,7 @@ app.get("/api/date", (req, res) => {
                     err
                 );
 
+
                 return res.status(500).json({
 
                     message:
@@ -245,6 +254,7 @@ app.get("/api/date", (req, res) => {
 
             }
 
+
             res.json(results);
 
         }
@@ -253,12 +263,14 @@ app.get("/api/date", (req, res) => {
 
 });
 
-// =====================================
-// START SERVER
-// =====================================
+
+/* ==============================
+   SERVER
+================================ */
 
 const PORT =
     process.env.PORT || 3000;
+
 
 app.listen(
 
