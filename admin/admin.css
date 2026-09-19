@@ -1,0 +1,214 @@
+/* ===============================
+   GENERAL
+================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px 15px;
+    font-family: Arial, sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffe6f0,
+            #ffd6e7,
+            #fff0f6
+        );
+
+    min-height: 100vh;
+}
+
+
+/* ===============================
+   CONTAINER
+================================ */
+
+.container {
+    width: 100%;
+    max-width: 900px;
+
+    margin: auto;
+}
+
+
+/* ===============================
+   TITLE
+================================ */
+
+h1 {
+    text-align: center;
+
+    color: #e91e63;
+
+    margin-bottom: 8px;
+
+    font-size: 36px;
+}
+
+.subtitle {
+    text-align: center;
+
+    color: #777;
+
+    margin-bottom: 30px;
+
+    font-size: 17px;
+}
+
+
+/* ===============================
+   LOADING
+================================ */
+
+#loading {
+    text-align: center;
+
+    color: #e91e63;
+
+    font-size: 18px;
+
+    padding: 30px;
+}
+
+
+/* ===============================
+   RESPONSES
+================================ */
+
+.responses {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+
+/* ===============================
+   RESPONSE CARD
+================================ */
+
+.response-card {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.12);
+
+    border-left:
+        6px solid #e91e63;
+}
+
+
+.response-card h2 {
+    margin-top: 0;
+
+    color: #e91e63;
+
+    font-size: 22px;
+}
+
+
+/* ===============================
+   INFORMATION
+================================ */
+
+.info {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 12px 0;
+
+    border-bottom:
+        1px solid #eee;
+
+    font-size: 16px;
+}
+
+
+.info:last-child {
+    border-bottom: none;
+}
+
+
+.label {
+    font-weight: bold;
+
+    color: #555;
+}
+
+
+.value {
+    color: #333;
+
+    text-align: right;
+}
+
+
+/* ===============================
+   NO DATA
+================================ */
+
+.no-data {
+    background: white;
+
+    padding: 40px;
+
+    text-align: center;
+
+    border-radius: 20px;
+
+    color: #e91e63;
+
+    font-size: 20px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.1);
+}
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 20px 10px;
+    }
+
+
+    h1 {
+        font-size: 28px;
+    }
+
+
+    .response-card {
+        padding: 20px;
+    }
+
+
+    .info {
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .value {
+        text-align: left;
+    }
+
+}
