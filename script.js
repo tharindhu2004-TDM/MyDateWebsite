@@ -1,3 +1,4 @@
+
 // ===============================
 // GET BUTTONS
 // ===============================
@@ -48,7 +49,7 @@ const finalSection =
 // YES BUTTON
 // ===============================
 
-yesBtn.addEventListener("click", function() {
+yesBtn.addEventListener("click", function () {
 
     welcomeSection.style.display = "none";
 
@@ -56,7 +57,7 @@ yesBtn.addEventListener("click", function() {
 
     for (let i = 0; i < 15; i++) {
 
-        setTimeout(function() {
+        setTimeout(function () {
             createHeart();
         }, i * 100);
 
@@ -69,7 +70,7 @@ yesBtn.addEventListener("click", function() {
 // NO BUTTON
 // ===============================
 
-noBtn.addEventListener("mouseover", function() {
+noBtn.addEventListener("mouseover", function () {
 
     noBtn.style.position = "fixed";
 
@@ -100,7 +101,7 @@ noBtn.addEventListener("mouseover", function() {
 // DATE → TIME
 // ===============================
 
-nextDateBtn.addEventListener("click", function() {
+nextDateBtn.addEventListener("click", function () {
 
     const selectedDate =
         document.getElementById("dateInput").value;
@@ -124,7 +125,7 @@ nextDateBtn.addEventListener("click", function() {
 // TIME → CHOICE
 // ===============================
 
-nextTimeBtn.addEventListener("click", function() {
+nextTimeBtn.addEventListener("click", function () {
 
     const selectedTime =
         document.getElementById("timeInput").value;
@@ -151,11 +152,11 @@ nextTimeBtn.addEventListener("click", function() {
 const choiceButtons =
     document.querySelectorAll(".choiceBtn");
 
-choiceButtons.forEach(function(button) {
+choiceButtons.forEach(function (button) {
 
-    button.addEventListener("click", function() {
+    button.addEventListener("click", function () {
 
-        choiceButtons.forEach(function(btn) {
+        choiceButtons.forEach(function (btn) {
 
             btn.classList.remove("selected");
 
@@ -172,7 +173,7 @@ choiceButtons.forEach(function(button) {
 // CHOICE → PLACE
 // ===============================
 
-nextChoiceBtn.addEventListener("click", function() {
+nextChoiceBtn.addEventListener("click", function () {
 
     const selectedChoice =
         document.querySelector(
@@ -203,11 +204,11 @@ nextChoiceBtn.addEventListener("click", function() {
 const placeButtons =
     document.querySelectorAll(".placeBtn");
 
-placeButtons.forEach(function(button) {
+placeButtons.forEach(function (button) {
 
-    button.addEventListener("click", function() {
+    button.addEventListener("click", function () {
 
-        placeButtons.forEach(function(btn) {
+        placeButtons.forEach(function (btn) {
 
             btn.classList.remove("selected");
 
@@ -224,7 +225,7 @@ placeButtons.forEach(function(button) {
 // FINISH
 // ===============================
 
-finishBtn.addEventListener("click", function() {
+finishBtn.addEventListener("click", async function () {
 
     const selectedDate =
         document.getElementById("dateInput").value;
@@ -274,134 +275,165 @@ finishBtn.addEventListener("click", function() {
 
 
     // ===============================
-    // SAVE DATA ONLINE
+    // GET TEXT VALUES
     // ===============================
 
-    fetch(
-        "https://mydatewebsite-production.up.railway.app/api/date",
-        {
-            method: "POST",
+    const activity =
+        selectedChoice.textContent.trim();
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+    const place =
+        selectedPlace.textContent.trim();
 
-            body: JSON.stringify({
 
-                date: selectedDate,
+    // ===============================
+    // SAVE DATA TO RAILWAY
+    // ===============================
 
-                time: selectedTime,
+    try {
 
-                activity:
-                    selectedChoice.textContent.trim(),
+        console.log("Sending data to backend...");
 
-                place:
-                    selectedPlace.textContent.trim()
+        const response =
+            await fetch(
+                "/api/date",
+                {
+                    method: "POST",
 
-            })
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-        }
-    )
+                    body: JSON.stringify({
 
-    .then(function(response) {
+                        date:
+                            selectedDate,
+
+                        time:
+                            selectedTime,
+
+                        activity:
+                            activity,
+
+                        place:
+                            place
+
+                    })
+
+                }
+            );
+
+
+        // ===============================
+        // CHECK SERVER RESPONSE
+        // ===============================
 
         if (!response.ok) {
 
+            const errorText =
+                await response.text();
+
+            console.error(
+                "Backend error:",
+                errorText
+            );
+
             throw new Error(
-                "Failed to save date information"
+                "Backend returned an error"
             );
 
         }
 
-        return response.json();
 
-    })
+        const data =
+            await response.json();
 
-    .then(function(data) {
 
         console.log(
-            "Online data saved:",
+            "Online data saved successfully:",
             data
         );
 
-    })
 
-    .catch(function(error) {
+        // ===============================
+        // SHOW FINAL DATE
+        // ===============================
+
+        document.getElementById(
+            "finalDate"
+        ).textContent =
+            formatDate(selectedDate);
+
+
+        // ===============================
+        // SHOW FINAL TIME
+        // ===============================
+
+        document.getElementById(
+            "finalTime"
+        ).textContent =
+            formatTime(selectedTime);
+
+
+        // ===============================
+        // SHOW ACTIVITY
+        // ===============================
+
+        document.getElementById(
+            "finalChoice"
+        ).textContent =
+            selectedChoice.textContent;
+
+
+        // ===============================
+        // SHOW PLACE
+        // ===============================
+
+        document.getElementById(
+            "finalPlace"
+        ).textContent =
+            selectedPlace.textContent;
+
+
+        // ===============================
+        // SHOW FINAL SECTION
+        // ===============================
+
+        placeSection.style.display =
+            "none";
+
+        finalSection.style.display =
+            "block";
+
+
+        // ===============================
+        // EXTRA HEARTS
+        // ===============================
+
+        for (let i = 0; i < 30; i++) {
+
+            setTimeout(function () {
+
+                createHeart();
+
+            }, i * 100);
+
+        }
+
+    }
+
+
+    catch (error) {
 
         console.error(
             "Error sending data:",
             error
         );
 
+
         alert(
-            "Data save karanna bari una 😢 Backend server eka check karanna."
+            "Data save karanna bari una 😢 Please try again."
         );
-
-    });
-
-
-    // ===============================
-    // SHOW FINAL DATE
-    // ===============================
-
-    document.getElementById(
-        "finalDate"
-    ).textContent =
-        formatDate(selectedDate);
-
-
-    // ===============================
-    // SHOW FINAL TIME
-    // ===============================
-
-    document.getElementById(
-        "finalTime"
-    ).textContent =
-        formatTime(selectedTime);
-
-
-    // ===============================
-    // SHOW ACTIVITY
-    // ===============================
-
-    document.getElementById(
-        "finalChoice"
-    ).textContent =
-        selectedChoice.textContent;
-
-
-    // ===============================
-    // SHOW PLACE
-    // ===============================
-
-    document.getElementById(
-        "finalPlace"
-    ).textContent =
-        selectedPlace.textContent;
-
-
-    // ===============================
-    // SHOW FINAL SECTION
-    // ===============================
-
-    placeSection.style.display =
-        "none";
-
-    finalSection.style.display =
-        "block";
-
-
-    // ===============================
-    // EXTRA HEARTS
-    // ===============================
-
-    for (let i = 0; i < 30; i++) {
-
-        setTimeout(function() {
-
-            createHeart();
-
-        }, i * 100);
 
     }
 
@@ -444,9 +476,13 @@ function formatTime(timeValue) {
     const date =
         new Date();
 
-    date.setHours(hours);
+    date.setHours(
+        Number(hours)
+    );
 
-    date.setMinutes(minutes);
+    date.setMinutes(
+        Number(minutes)
+    );
 
     return date.toLocaleTimeString(
         "en-US",
@@ -494,7 +530,7 @@ function createHeart() {
         .appendChild(heart);
 
 
-    setTimeout(function() {
+    setTimeout(function () {
 
         heart.remove();
 
@@ -511,3 +547,4 @@ setInterval(
     createHeart,
     700
 );
+
