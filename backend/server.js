@@ -1,47 +1,66 @@
 const express = require("express");
-require("dotenv").config();
-const mysql = require("mysql2");
 const cors = require("cors");
+const mysql = require("mysql2");
+require("dotenv").config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+
 // ===============================
 // MYSQL CONNECTION
 // ===============================
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: "date_website"
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306
 });
 
+
 // ===============================
-// CONNECT TO MYSQL
+// MYSQL CONNECT
 // ===============================
 
 db.connect((err) => {
+
     if (err) {
-        console.log("MySQL connection failed:", err);
+
+        console.log(
+            "MySQL connection failed:",
+            err
+        );
+
         return;
+
     }
 
-    console.log("MySQL connected successfully!");
+    console.log(
+        "MySQL connected successfully!"
+    );
+
 });
+
 
 // ===============================
 // HOME
 // ===============================
 
 app.get("/", (req, res) => {
-    res.send("Date Website Backend is Running!");
+
+    res.send(
+        "Date Website Backend is Running!"
+    );
+
 });
 
+
 // ===============================
-// SAVE DATE RESPONSE
+// SAVE DATE
 // ===============================
 
 app.post("/api/date", (req, res) => {
@@ -53,18 +72,24 @@ app.post("/api/date", (req, res) => {
         place
     } = req.body;
 
-    console.log("Received data:", {
-        date,
-        time,
-        activity,
-        place
-    });
+
+    console.log(
+        "Received data:",
+        {
+            date,
+            time,
+            activity,
+            place
+        }
+    );
+
 
     const sql = `
         INSERT INTO date_responses
         (date_value, time_value, activity, place)
         VALUES (?, ?, ?, ?)
     `;
+
 
     db.query(
         sql,
@@ -84,26 +109,38 @@ app.post("/api/date", (req, res) => {
                 );
 
                 return res.status(500).json({
+
                     message:
                         "Failed to save data"
+
                 });
+
             }
+
 
             console.log(
                 "Date data saved successfully!"
             );
 
+
             res.json({
+
                 message:
                     "Date saved successfully!",
-                id: result.insertId
+
+                id:
+                    result.insertId
+
             });
+
         }
     );
+
 });
 
+
 // ===============================
-// GET ALL DATE RESPONSES
+// GET DATE RESPONSES
 // ===============================
 
 app.get("/api/date", (req, res) => {
@@ -113,6 +150,7 @@ app.get("/api/date", (req, res) => {
         FROM date_responses
         ORDER BY created_at DESC
     `;
+
 
     db.query(
         sql,
@@ -126,24 +164,35 @@ app.get("/api/date", (req, res) => {
                 );
 
                 return res.status(500).json({
+
                     message:
                         "Failed to get data"
+
                 });
+
             }
 
+
             res.json(results);
+
         }
     );
+
 });
+
 
 // ===============================
 // START SERVER
 // ===============================
 
-app.listen(3000, () => {
+const PORT =
+    process.env.PORT || 3000;
+
+
+app.listen(PORT, () => {
 
     console.log(
-        "Server running on http://localhost:3000"
+        `Server running on port ${PORT}`
     );
 
 });
