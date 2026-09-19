@@ -54,15 +54,10 @@ yesBtn.addEventListener("click", function() {
 
     dateSection.style.display = "block";
 
-
-    // Heart burst
-
     for (let i = 0; i < 15; i++) {
 
         setTimeout(function() {
-
             createHeart();
-
         }, i * 100);
 
     }
@@ -78,28 +73,22 @@ noBtn.addEventListener("mouseover", function() {
 
     noBtn.style.position = "fixed";
 
-
     const maxX =
         window.innerWidth -
         noBtn.offsetWidth;
-
 
     const maxY =
         window.innerHeight -
         noBtn.offsetHeight;
 
-
     const randomX =
         Math.random() * maxX;
-
 
     const randomY =
         Math.random() * maxY;
 
-
     noBtn.style.left =
         randomX + "px";
-
 
     noBtn.style.top =
         randomY + "px";
@@ -116,7 +105,6 @@ nextDateBtn.addEventListener("click", function() {
     const selectedDate =
         document.getElementById("dateInput").value;
 
-
     if (selectedDate === "") {
 
         alert("Please choose a date ❤️");
@@ -124,7 +112,6 @@ nextDateBtn.addEventListener("click", function() {
         return;
 
     }
-
 
     dateSection.style.display = "none";
 
@@ -142,7 +129,6 @@ nextTimeBtn.addEventListener("click", function() {
     const selectedTime =
         document.getElementById("timeInput").value;
 
-
     if (selectedTime === "") {
 
         alert("Please choose a time ⏰❤️");
@@ -150,7 +136,6 @@ nextTimeBtn.addEventListener("click", function() {
         return;
 
     }
-
 
     timeSection.style.display = "none";
 
@@ -166,18 +151,15 @@ nextTimeBtn.addEventListener("click", function() {
 const choiceButtons =
     document.querySelectorAll(".choiceBtn");
 
-
 choiceButtons.forEach(function(button) {
 
     button.addEventListener("click", function() {
-
 
         choiceButtons.forEach(function(btn) {
 
             btn.classList.remove("selected");
 
         });
-
 
         button.classList.add("selected");
 
@@ -197,7 +179,6 @@ nextChoiceBtn.addEventListener("click", function() {
             ".choiceBtn.selected"
         );
 
-
     if (!selectedChoice) {
 
         alert(
@@ -207,7 +188,6 @@ nextChoiceBtn.addEventListener("click", function() {
         return;
 
     }
-
 
     choiceSection.style.display = "none";
 
@@ -223,18 +203,15 @@ nextChoiceBtn.addEventListener("click", function() {
 const placeButtons =
     document.querySelectorAll(".placeBtn");
 
-
 placeButtons.forEach(function(button) {
 
     button.addEventListener("click", function() {
-
 
         placeButtons.forEach(function(btn) {
 
             btn.classList.remove("selected");
 
         });
-
 
         button.classList.add("selected");
 
@@ -252,22 +229,23 @@ finishBtn.addEventListener("click", function() {
     const selectedDate =
         document.getElementById("dateInput").value;
 
-
     const selectedTime =
         document.getElementById("timeInput").value;
-
 
     const selectedChoice =
         document.querySelector(
             ".choiceBtn.selected"
         );
 
-
     const selectedPlace =
         document.querySelector(
             ".placeBtn.selected"
         );
 
+
+    // ===============================
+    // CHECK ACTIVITY
+    // ===============================
 
     if (!selectedChoice) {
 
@@ -279,6 +257,10 @@ finishBtn.addEventListener("click", function() {
 
     }
 
+
+    // ===============================
+    // CHECK PLACE
+    // ===============================
 
     if (!selectedPlace) {
 
@@ -292,32 +274,34 @@ finishBtn.addEventListener("click", function() {
 
 
     // ===============================
-    // SEND DATA TO BACKEND
+    // SAVE DATA ONLINE
     // ===============================
 
-    fetch("http://localhost:3000/api/date", {
+    fetch(
+        "https://mydatewebsite-production.up.railway.app/api/date",
+        {
+            method: "POST",
 
-        method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-        headers: {
+            body: JSON.stringify({
 
-            "Content-Type": "application/json"
+                date: selectedDate,
 
-        },
+                time: selectedTime,
 
-        body: JSON.stringify({
+                activity:
+                    selectedChoice.textContent.trim(),
 
-            date: selectedDate,
+                place:
+                    selectedPlace.textContent.trim()
 
-            time: selectedTime,
+            })
 
-            activity: selectedChoice.textContent.trim(),
-
-            place: selectedPlace.textContent.trim()
-
-        })
-
-    })
+        }
+    )
 
     .then(function(response) {
 
@@ -336,7 +320,7 @@ finishBtn.addEventListener("click", function() {
     .then(function(data) {
 
         console.log(
-            "Data saved:",
+            "Online data saved:",
             data
         );
 
@@ -350,17 +334,15 @@ finishBtn.addEventListener("click", function() {
         );
 
         alert(
-            "Data save karanna bari una 😢 Backend server eka running da balanna."
+            "Data save karanna bari una 😢 Backend server eka check karanna."
         );
 
     });
 
 
     // ===============================
-    // SHOW FINAL DATA
+    // SHOW FINAL DATE
     // ===============================
-
-    // Date
 
     document.getElementById(
         "finalDate"
@@ -368,7 +350,9 @@ finishBtn.addEventListener("click", function() {
         formatDate(selectedDate);
 
 
-    // Time
+    // ===============================
+    // SHOW FINAL TIME
+    // ===============================
 
     document.getElementById(
         "finalTime"
@@ -376,7 +360,9 @@ finishBtn.addEventListener("click", function() {
         formatTime(selectedTime);
 
 
-    // Activity
+    // ===============================
+    // SHOW ACTIVITY
+    // ===============================
 
     document.getElementById(
         "finalChoice"
@@ -384,7 +370,9 @@ finishBtn.addEventListener("click", function() {
         selectedChoice.textContent;
 
 
-    // Place
+    // ===============================
+    // SHOW PLACE
+    // ===============================
 
     document.getElementById(
         "finalPlace"
@@ -392,19 +380,20 @@ finishBtn.addEventListener("click", function() {
         selectedPlace.textContent;
 
 
-    // Hide place
+    // ===============================
+    // SHOW FINAL SECTION
+    // ===============================
 
     placeSection.style.display =
         "none";
-
-
-    // Show final
 
     finalSection.style.display =
         "block";
 
 
-    // Big heart burst
+    // ===============================
+    // EXTRA HEARTS
+    // ===============================
 
     for (let i = 0; i < 30; i++) {
 
@@ -430,21 +419,14 @@ function formatDate(dateValue) {
             dateValue + "T00:00:00"
         );
 
-
     return date.toLocaleDateString(
         "en-US",
         {
-
             weekday: "long",
-
             year: "numeric",
-
             month: "long",
-
             day: "numeric"
-
         }
-
     );
 
 }
@@ -459,26 +441,19 @@ function formatTime(timeValue) {
     const [hours, minutes] =
         timeValue.split(":");
 
-
     const date =
         new Date();
-
 
     date.setHours(hours);
 
     date.setMinutes(minutes);
 
-
     return date.toLocaleTimeString(
         "en-US",
         {
-
             hour: "numeric",
-
             minute: "2-digit"
-
         }
-
     );
 
 }
@@ -493,30 +468,19 @@ function createHeart() {
     const heart =
         document.createElement("div");
 
-
     heart.classList.add("heart");
-
 
     heart.textContent =
         "❤️";
 
-
-    // Random position
-
     heart.style.left =
         Math.random() * 100 + "%";
-
-
-    // Random size
 
     heart.style.fontSize =
         (
             15 +
             Math.random() * 25
         ) + "px";
-
-
-    // Random speed
 
     heart.style.animationDuration =
         (
@@ -529,8 +493,6 @@ function createHeart() {
         .getElementById("hearts")
         .appendChild(heart);
 
-
-    // Remove after animation
 
     setTimeout(function() {
 
