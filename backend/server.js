@@ -9,14 +9,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* ==============================
+/* ===============================
    FRONTEND
 ================================ */
 
 app.use(express.static(path.join(__dirname, "..")));
 
 
-/* ==============================
+/* ===============================
    DATABASE ENV CHECK
 ================================ */
 
@@ -35,7 +35,7 @@ console.log("MYSQL USER:", process.env.MYSQLUSER);
 console.log("========================================");
 
 
-/* ==============================
+/* ===============================
    DATABASE CONFIG
 ================================ */
 
@@ -71,16 +71,22 @@ console.log("FINAL DB USER:", DB_USER);
 console.log("===========================================");
 
 
-/* ==============================
+/* ===============================
    MYSQL CONNECTION
 ================================ */
 
 const db = mysql.createConnection({
+
     host: DB_HOST,
+
     user: DB_USER,
+
     password: DB_PASSWORD,
+
     database: DB_NAME,
+
     port: DB_PORT
+
 });
 
 
@@ -89,32 +95,40 @@ db.connect((err) => {
     if (err) {
 
         console.log("MySQL connection failed:");
+
         console.log(err);
 
         return;
+
     }
 
     console.log("================================");
+
     console.log("MySQL connected successfully!");
+
     console.log("================================");
 
 });
 
 
-/* ==============================
+/* ===============================
    FRONTEND HOME PAGE
 ================================ */
 
 app.get("/", (req, res) => {
 
     res.sendFile(
-        path.join(__dirname, "..", "index.html")
+        path.join(
+            __dirname,
+            "..",
+            "index.html"
+        )
     );
 
 });
 
 
-/* ==============================
+/* ===============================
    SAVE DATE RESPONSE
 ================================ */
 
@@ -129,41 +143,54 @@ app.post("/api/date", (req, res) => {
 
 
     console.log("Received data:", {
+
         date,
+
         time,
+
         activity,
+
         place
+
     });
 
 
-    /* Check required fields */
+    /* CHECK REQUIRED DATA */
 
-    if (!date || !time || !activity || !place) {
+    if (
+        !date ||
+        !time ||
+        !activity ||
+        !place
+    ) {
 
         return res.status(400).json({
 
-            message: "All fields are required"
+            message:
+                "All fields are required"
 
         });
 
     }
 
 
-    /* SQL query */
+    /* INSERT DATA */
 
     const sql = `
+
         INSERT INTO date_responses
+
         (
             date_value,
             time_value,
             activity,
             place
         )
+
         VALUES (?, ?, ?, ?)
+
     `;
 
-
-    /* Insert data */
 
     db.query(
 
@@ -218,16 +245,25 @@ app.post("/api/date", (req, res) => {
 });
 
 
-/* ==============================
+/* ===============================
    GET ALL DATE RESPONSES
 ================================ */
 
 app.get("/api/date", (req, res) => {
 
     const sql = `
-        SELECT *
+
+        SELECT
+            id,
+            date_value,
+            time_value,
+            activity,
+            place
+
         FROM date_responses
-        ORDER BY created_at DESC
+
+        ORDER BY id DESC
+
     `;
 
 
@@ -264,7 +300,7 @@ app.get("/api/date", (req, res) => {
 });
 
 
-/* ==============================
+/* ===============================
    SERVER
 ================================ */
 
