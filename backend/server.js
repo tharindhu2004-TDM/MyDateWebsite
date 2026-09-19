@@ -9,6 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 // ===============================
+// Check Railway Database Host
+// ===============================
+
+console.log("DB HOST:", process.env.DB_HOST);
+
+// ===============================
 // MySQL Database Connection
 // ===============================
 
@@ -25,6 +31,7 @@ const db = mysql.createConnection({
 // ===============================
 
 db.connect((err) => {
+
     if (err) {
         console.log("MySQL connection failed:");
         console.log(err);
@@ -39,7 +46,9 @@ db.connect((err) => {
 // ===============================
 
 app.get("/", (req, res) => {
+
     res.send("Date Website Backend is Running!");
+
 });
 
 // ===============================
@@ -63,9 +72,11 @@ app.post("/api/date", (req, res) => {
     });
 
     if (!date || !time || !activity || !place) {
+
         return res.status(400).json({
             message: "All fields are required"
         });
+
     }
 
     const sql = `
@@ -89,6 +100,7 @@ app.post("/api/date", (req, res) => {
                 return res.status(500).json({
                     message: "Failed to save data"
                 });
+
             }
 
             console.log(
@@ -99,8 +111,10 @@ app.post("/api/date", (req, res) => {
                 message: "Date saved successfully!",
                 id: result.insertId
             });
+
         }
     );
+
 });
 
 // ===============================
@@ -127,10 +141,13 @@ app.get("/api/date", (req, res) => {
             return res.status(500).json({
                 message: "Failed to get data"
             });
+
         }
 
         res.json(results);
+
     });
+
 });
 
 // ===============================
