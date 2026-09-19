@@ -8,9 +8,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
 // ===============================
-// MYSQL CONNECTION
+// MySQL Database Connection
 // ===============================
 
 const db = mysql.createConnection({
@@ -21,46 +20,25 @@ const db = mysql.createConnection({
     port: process.env.DB_PORT || 3306
 });
 
-
-// ===============================
-// MYSQL CONNECT
-// ===============================
-
 db.connect((err) => {
-
     if (err) {
-
-        console.log(
-            "MySQL connection failed:",
-            err
-        );
-
+        console.log("MySQL connection failed:", err);
         return;
-
     }
 
-    console.log(
-        "MySQL connected successfully!"
-    );
-
+    console.log("MySQL connected successfully!");
 });
 
-
 // ===============================
-// HOME
+// Test Route
 // ===============================
 
 app.get("/", (req, res) => {
-
-    res.send(
-        "Date Website Backend is Running!"
-    );
-
+    res.send("Date Website Backend is Running!");
 });
 
-
 // ===============================
-// SAVE DATE
+// Save Date Response
 // ===============================
 
 app.post("/api/date", (req, res) => {
@@ -72,17 +50,12 @@ app.post("/api/date", (req, res) => {
         place
     } = req.body;
 
-
-    console.log(
-        "Received data:",
-        {
-            date,
-            time,
-            activity,
-            place
-        }
-    );
-
+    console.log("Received data:", {
+        date,
+        time,
+        activity,
+        place
+    });
 
     const sql = `
         INSERT INTO date_responses
@@ -90,15 +63,9 @@ app.post("/api/date", (req, res) => {
         VALUES (?, ?, ?, ?)
     `;
 
-
     db.query(
         sql,
-        [
-            date,
-            time,
-            activity,
-            place
-        ],
+        [date, time, activity, place],
         (err, result) => {
 
             if (err) {
@@ -109,38 +76,24 @@ app.post("/api/date", (req, res) => {
                 );
 
                 return res.status(500).json({
-
-                    message:
-                        "Failed to save data"
-
+                    message: "Failed to save data"
                 });
-
             }
-
 
             console.log(
                 "Date data saved successfully!"
             );
 
-
             res.json({
-
-                message:
-                    "Date saved successfully!",
-
-                id:
-                    result.insertId
-
+                message: "Date saved successfully!",
+                id: result.insertId
             });
-
         }
     );
-
 });
 
-
 // ===============================
-// GET DATE RESPONSES
+// Get All Date Responses
 // ===============================
 
 app.get("/api/date", (req, res) => {
@@ -151,43 +104,29 @@ app.get("/api/date", (req, res) => {
         ORDER BY created_at DESC
     `;
 
+    db.query(sql, (err, results) => {
 
-    db.query(
-        sql,
-        (err, results) => {
+        if (err) {
 
-            if (err) {
+            console.log(
+                "Database read error:",
+                err
+            );
 
-                console.log(
-                    "Database read error:",
-                    err
-                );
-
-                return res.status(500).json({
-
-                    message:
-                        "Failed to get data"
-
-                });
-
-            }
-
-
-            res.json(results);
-
+            return res.status(500).json({
+                message: "Failed to get data"
+            });
         }
-    );
 
+        res.json(results);
+    });
 });
 
-
 // ===============================
-// START SERVER
+// Start Server
 // ===============================
 
-const PORT =
-    process.env.PORT || 3000;
-
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
 
